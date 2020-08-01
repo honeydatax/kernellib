@@ -1,0 +1,19 @@
+api
+basic io 32
+	compiling in nasm
+		nasm -o basicio.com basicio.asm
+	compile you sample
+		nasm -o hello.com hello.asm
+	api
+		int 0xF0
+		ax=function number
+	int 0xf0
+		ax=0
+			;function 0 exit basic io kernel
+		ax=1
+			bx=var program data segment ds:bx
+			;prints string function in bx address 
+		ax=2
+			bx=var offset of address	
+			dx=segment of address
+			eax=return address
