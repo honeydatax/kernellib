@@ -4,6 +4,12 @@ basic io 32
 		nasm -o basicio.com basicio.asm
 	compile you sample
 		nasm -o hello.com hello.asm
+	compile you application on assembly or c
+		nasm -o hello.com hello.asm
+	rename you file
+		rename hello.com hello.bio
+	run you application
+		basicio hello.bio
 	api
 		int 0xF0
 		ax=function number
@@ -17,3 +23,27 @@ basic io 32
 			bx=var offset of address	
 			dx=segment of address
 			eax=return address
+			;get 32 address from data segment and offset
+		ax=3
+			bx=var address ds of data segment offset
+			;echo prints a string in a screen
+		ax=4
+			bx=var1 compare offset ds + offset of 32bits integer
+			cx=var2 compere offset ds + offset of 32bits integer
+			dx=offset jmp into if not like
+			;like comp 2 var 32bits and jmp if not like it and continue if like
+		ax=5
+			bx=var1 compare offset ds + offset of 32bits integer
+			cx=var2 compere offset ds + offset of 32bits integer
+			dx=offset jmp into if not like
+			;diferent comp 2 var 32bits and jmp if like it and continue if diferent
+		ax=6
+			bx=var1 compare offset ds + offset of 32bits integer
+			cx=var2 compere offset ds + offset of 32bits integer
+			dx=offset jmp into if not like
+			;big comp 2 var 32bits and jmp if less or like it and continue if big
+		ax=7
+			bx=var1 compare offset ds + offset of 32bits integer
+			cx=var2 compere offset ds + offset of 32bits integer
+			dx=offset jmp into if not like
+			;less comp 2 var 32bits and jmp if big or like it and continue if less
