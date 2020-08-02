@@ -346,6 +346,33 @@ MEM32:
           add eax,esi
           pop esi                
           RET                
+echo:
+          push bp                
+          mov ax,ds
+          mov es,ax
+          xchg si,bp 
+          mov bx,bp
+          ds
+          mov cl,[bx]
+          inc bp                
+          and cx,0ffh
+          mov bx,x
+          cs
+          mov dx,[bx]
+          mov bx,color
+          cs
+          mov al,[bx]
+          mov bl,al
+          mov bh,0   
+          mov al,0                
+          mov ah,13h
+          int 10h                
+          pop bp                
+          IRET   
+
+funcecho:
+	mov si,bx
+	jmp echo
 intF0:
 	cmp ax,19
 	ja intF0_0
@@ -363,9 +390,29 @@ intF0_A20_1:
 	jmp funcprint32
 intF0_A20_2:
 	cmp ax,2
-	jnz intF0_A20_2
+	jnz intF0_A20_3
 	jmp funcmem32
 intF0_A20_3:
+	cmp ax,3
+	jnz intF0_A20_4
+	jmp funcecho
+intF0_A20_4:
+	cmp ax,4
+	jnz intF0_A20_5
+	jmp funclike
+intF0_A20_5:
+	cmp ax,5
+	jnz intF0_A20_6
+	jmp funcdiferent
+intF0_A20_6:
+	cmp ax,6
+	jnz intF0_A20_7
+	jmp funcbig
+intF0_A20_7:
+	cmp ax,7
+	jnz intF0_A20_8
+	jmp funcless
+intF0_A20_8:
 iret
 funcend:
 	jmp exit
@@ -382,10 +429,77 @@ funcprint32:
 	mov ecx,eax
 	call PRINT32
 iret	
+funclike:
+	mov si,bx
+	ds
+	mov eax,[si]
+	mov si,cx
+	ds
+	mov ebx,[si]
+	cmp eax,ebx
+	jnz funclike2
+	iret
+funclike2:
+	pop eax
+	inc sp
+	push ds
+	push dx
+	retf
+funcdiferent:
+	mov si,bx
+	ds
+	mov eax,[si]
+	mov si,cx
+	ds
+	mov ebx,[si]
+	cmp eax,ebx
+	jz funcdiferent2
+	iret
+funcdiferent2:
+	pop eax
+	inc sp
+	push ds
+	push dx
+	retf
+funcbig:
+	mov si,bx
+	ds
+	mov eax,[si]
+	mov si,cx
+	ds
+	mov ebx,[si]
+	cmp eax,ebx
+	jle funcbig2
+	iret
+funcbig2:
+	pop eax
+	inc sp
+	push ds
+	push dx
+	retf
+funcless:
+	mov si,bx
+	ds
+	mov eax,[si]
+	mov si,cx
+	ds
+	mov ebx,[si]
+	cmp eax,ebx
+	jae funcless2
+	iret
+funcless2:
+	pop eax
+	inc sp
+	push ds
+	push dx
+	retf
 
 
 L18 dd 0
 L20 dd 0
-x dw 0
+x dw 1
+y dw 1
+color db 7
+var dd 0
 rreservemem dd 0
 endf dd 0
