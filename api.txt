@@ -51,7 +51,7 @@ basic io 32
 			bx=address of a 32bits integer
 			;str give a number on the screen
 		ax=9
-			si=function mat ,0=+ , 1=- ,2=X ,3= : ,4=% division remain, 5=^ up to it 
+			si=function mat ,0=+ , 1=- ,2=X ,3= : ,4=% division remain, 5=^ up to it ,6=or bits,7=and bit ,8=not bit , 9=xor bit , 10 =set bit dx , 11=reset bit dx
 			bx=solve math resolt 32 bites integer
 			cx=integer mat1 math resolt 32 bites integer
 			dx=integer mat2 math resolt 32 bites integer
