@@ -546,6 +546,23 @@ funcless2:
 	push ds
 	push dx
 	retf
+funcstr:
+	push bx
+	mov si,L17
+	mov ax,cs
+	call MEM32
+	mov edi,eax
+	pop bx
+	mov si,bx
+	call STR32
+	mov si,L17
+	mov ax,cs
+	call MEM32
+	mov esi,eax
+	call len32
+	mov ecx,eax
+	call PRINT32
+iret
 funcmath:
 	mov ax,si
 	cmp ax,0
@@ -723,6 +740,10 @@ funcmath2:
 	jz funcset
 	cmp ax,11
 	jz funcreset
+	cmp ax,12
+	jz funcreget
+	cmp ax,13
+	jz funcretrogle
 iret 
 funcset:
 	push cx
@@ -781,23 +802,84 @@ funcreset2:
 	ds
 	mov [si],eax
 	iret
-funcstr:
+funcreget:
+	push cx
 	push bx
-	mov si,L17
-	mov ax,cs
-	call MEM32
-	mov edi,eax
-	pop bx
-	mov si,bx
-	call STR32
-	mov si,L17
-	mov ax,cs
-	call MEM32
-	mov esi,eax
-	call len32
-	mov ecx,eax
-	call PRINT32
-iret
+	mov si,dx
+	mov eax,1
+	ds
+	mov ebx,[si]
+	cmp ebx,0
+	jz funcreget2
+	mov edi,ebx
+	mov esi,2
+funcreget1:
+	mov ebx,esi
+	mov ecx,0
+	mov edx,0
+	mul ebx
+	dec edi
+	cmp edi,0
+	jnz funcreget1
+funcreget2:
+	pop si
+	pop di
+	ds
+	mov ebx,[di]
+	and eax,ebx
+	cmp eax,0
+	jz funcreget5
+	mov eax,1
+funcreget5:
+	ds
+	mov [si],eax
+	iret
+funcretrogle:
+	push bx
+	push cx
+	push cx
+	mov si,dx
+	mov eax,1
+	ds
+	mov ebx,[si]
+	cmp ebx,0
+	jz funcretrogle2
+	mov edi,ebx
+	mov esi,2
+funcretrogle1:
+	mov ebx,esi
+	mov ecx,0
+	mov edx,0
+	mul ebx
+	dec edi
+	cmp edi,0
+	jnz funcretrogle1
+funcretrogle2:
+	pop di
+	ds
+	mov ebx,[di]
+	push eax
+	and eax,ebx
+	cmp eax,0
+	jz funcretrogle5
+	pop ebx
+	pop si
+	ds
+	mov eax,[si]
+	not ebx
+	and eax,ebx
+	jmp funcretrogle6
+funcretrogle5:
+	pop ebx
+	pop si
+	ds
+	mov eax,[si]
+	or eax,ebx
+funcretrogle6:
+	pop si
+	ds
+	mov [si],eax
+	iret
 
 L18 dd 0
 L20 dd 0
