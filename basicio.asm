@@ -558,6 +558,8 @@ funcmath:
 	jz funcdiv
 	cmp ax,4
 	jz funcremain
+	cmp ax,5
+	jz funcupto
 	iret
 funcadd:
 	mov si,cx
@@ -628,6 +630,39 @@ funcremain:
 	ds
 	mov [si],edx
 	iret
+funcupto:
+	push bx
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ebx,[si]
+	cmp ebx,0
+	jz funcupto3
+	dec ebx
+	mov esi,eax
+	mov edi,ebx
+	mov ebx,eax
+	cmp edi,0
+	jz funcupto2
+	jmp funcupto1
+funcupto3:
+	mov eax,0
+	jmp funcupto2
+funcupto1:
+	mov ebx,esi
+	mov ecx,0
+	mov edx,0
+	mul ebx
+	dec edi
+	cmp edi,0
+	jnz funcupto1
+funcupto2:
+	pop si
+	ds
+	mov [si],eax
+	iret
 funcstr:
 	mov si,L17
 	mov ax,ds
@@ -643,6 +678,7 @@ funcstr:
 	mov ecx,eax
 	call PRINT32
 iret
+
 L18 dd 0
 L20 dd 0
 L17 db "0000000000",0,0,0,0,0,0,0,0
