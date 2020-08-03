@@ -373,6 +373,50 @@ echo:
 funcecho:
 	mov si,bx
 	jmp echo
+STR32:                
+        push eax                
+        push ebx                
+        push ecx                
+        push edx                
+        push edi                
+        push esi                
+        push ebp                
+        push ds                
+        mov eax,[si]
+        mov ebp,0			
+        mov ds,bp                
+        mov ebp,1000000000
+        STR321:                
+                  xor edx,edx
+                  xor ecx,ecx
+                  mov ebx,ebp
+                  clc                 
+                  div ebx                
+                  mov esi,edx
+                  mov ah,'0'
+                  clc                
+                  add al,ah
+                  mov [edi],al
+                  inc edi                
+                  mov eax,ebp
+                  xor edx,edx
+                  xor ecx,ecx
+                  mov ebx,10
+                  clc                
+                  div ebx                
+                  mov ebp,eax
+                  mov eax,esi
+                  cmp ebp,0
+                  JNZ STR321
+          pop ds                
+          pop ebp                
+          pop esi                
+          pop edi                
+          pop edx                
+          pop ecx                
+          pop ebx                
+          pop eax                
+          RET          
 intF0:
 	cmp ax,19
 	ja intF0_0
@@ -413,6 +457,15 @@ intF0_A20_7:
 	jnz intF0_A20_8
 	jmp funcless
 intF0_A20_8:
+	cmp ax,8
+	jnz intF0_A20_9
+	jmp funcstr
+intF0_A20_9:
+	cmp ax,9
+	jnz intF0_A20_10
+	jmp funcmath
+intF0_A20_10:
+
 iret
 funcend:
 	jmp exit
@@ -493,10 +546,106 @@ funcless2:
 	push ds
 	push dx
 	retf
-
-
+funcmath:
+	mov ax,si
+	cmp ax,0
+	jz funcadd
+	cmp ax,1
+	jz funcsub
+	cmp ax,2
+	jz funcmul
+	cmp ax,3
+	jz funcdiv
+	cmp ax,4
+	jz funcremain
+	iret
+funcadd:
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ecx,[si]
+	add eax,ecx
+	mov si,bx
+	ds
+	mov [si],eax
+	iret
+funcsub:
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ecx,[si]
+	sub eax,ecx
+	mov si,bx
+	ds
+	mov [si],eax
+	iret
+funcmul:
+	push bx
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ebx,[si]
+	mov ecx,0
+	mov edx,0
+	mul ebx
+	pop si
+	ds
+	mov [si],eax
+	iret
+funcdiv:
+	push bx
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ebx,[si]
+	mov ecx,0
+	mov edx,0
+	div ebx
+	pop si
+	ds
+	mov [si],eax
+	iret
+funcremain:
+	push bx
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ebx,[si]
+	mov ecx,0
+	mov edx,0
+	div ebx
+	pop si
+	ds
+	mov [si],edx
+	iret
+funcstr:
+	mov si,L17
+	mov ax,ds
+	call MEM32
+	mov edi,eax
+	mov si,bx
+	call STR32
+	mov si,L17
+	mov ax,ds
+	call MEM32
+	mov esi,eax
+	call len32
+	mov ecx,eax
+	call PRINT32
+iret
 L18 dd 0
 L20 dd 0
+L17 db "0000000000",0,0,0,0,0,0,0,0
 x dw 1
 y dw 1
 color db 7
