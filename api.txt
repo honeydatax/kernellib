@@ -47,3 +47,7 @@ basic io 32
 			cx=var2 compere offset ds + offset of 32bits integer
 			dx=offset jmp into if not like
 			;less comp 2 var 32bits and jmp if big or like it and continue if less
+		ax=8
+			bx=address of a 32bits integer
+			;str give a number on the screen
+		ax=9
