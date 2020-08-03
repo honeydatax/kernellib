@@ -560,7 +560,16 @@ funcmath:
 	jz funcremain
 	cmp ax,5
 	jz funcupto
-	iret
+	cmp ax,6
+	jz funcor
+	cmp ax,7
+	jz funcand
+	cmp ax,8
+	jz funcnot
+	cmp ax,9
+	jz funcxor
+	jmp funcmath2 
+iret
 funcadd:
 	mov si,cx
 	ds
@@ -663,15 +672,126 @@ funcupto2:
 	ds
 	mov [si],eax
 	iret
+funcor:
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ecx,[si]
+	or eax,ecx
+	mov si,bx
+	ds
+	mov [si],eax
+	iret
+funcand:
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ecx,[si]
+	and eax,ecx
+	mov si,bx
+	ds
+	mov [si],eax
+	iret
+funcnot:
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	not eax
+	mov si,bx
+	ds
+	mov [si],eax
+	iret
+funcxor:
+	mov si,cx
+	ds
+	mov eax,[si]
+	mov si,dx
+	ds
+	mov ecx,[si]
+	xor eax,ecx
+	mov si,bx
+	ds
+	mov [si],eax
+	iret
+funcmath2:
+	cmp ax,10
+	jz funcset
+	cmp ax,11
+	jz funcreset
+iret 
+funcset:
+	push cx
+	push bx
+	mov si,dx
+	mov eax,1
+	ds
+	mov ebx,[si]
+	cmp ebx,0
+	jz funcset2
+	mov edi,ebx
+	mov esi,2
+funcset1:
+	mov ebx,esi
+	mov ecx,0
+	mov edx,0
+	mul ebx
+	dec edi
+	cmp edi,0
+	jnz funcset1
+funcset2:
+	pop si
+	pop di
+	ds
+	mov ebx,[di]
+	or eax,ebx
+	ds
+	mov [si],eax
+iret
+funcreset:
+	push cx
+	push bx
+	mov si,dx
+	mov eax,1
+	ds
+	mov ebx,[si]
+	cmp ebx,0
+	jz funcreset2
+	mov edi,ebx
+	mov esi,2
+funcreset1:
+	mov ebx,esi
+	mov ecx,0
+	mov edx,0
+	mul ebx
+	dec edi
+	cmp edi,0
+	jnz funcreset1
+funcreset2:
+	pop si
+	pop di
+	ds
+	mov ebx,[di]
+	not eax
+	and eax,ebx
+	ds
+	mov [si],eax
+	iret
 funcstr:
+	push bx
 	mov si,L17
-	mov ax,ds
+	mov ax,cs
 	call MEM32
 	mov edi,eax
+	pop bx
 	mov si,bx
 	call STR32
 	mov si,L17
-	mov ax,ds
+	mov ax,cs
 	call MEM32
 	mov esi,eax
 	call len32
